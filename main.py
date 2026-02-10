@@ -295,7 +295,3 @@ def quiz():
         mc_mode=mc_mode,
         mc_options=mc_options
     )
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
