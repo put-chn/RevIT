@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Question Admin</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f6f7fb; margin: 0; }
+    .wrap { max-width: 900px; margin: 24px auto; background: #fff; padding: 20px 28px; border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+    h1 { margin: 0 0 8px 0; }
+    .meta { color:#666; margin-bottom: 12px; }
+    .row { display: flex; gap: 16px; }
+    .col { flex: 1; }
+    label { display:block; font-weight:600; margin: 10px 0 6px; }
+    input[type=text], select, textarea {
+      width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size: 14px;
+    }
+    textarea { min-height: 100px; }
+    .actions { margin-top: 16px; display:flex; gap:8px; flex-wrap: wrap; }
+    button {
+      background:#4a90e2; color:#fff; border:none; padding:10px 16px; border-radius:6px; cursor:pointer;
+    }
+    button.secondary { background:#7b8ba3; }
+    button.danger { background:#d9534f; }
+    .flash { background: #eef7ff; color:#2b5f8a; padding: 8px 10px; border-radius:6px; margin-bottom:10px; }
+    .two { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stats-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat { background:#f3f5f9; padding:10px; border-radius:6px; text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Question Admin</h1>
+    <div class="meta">Viewing {{ index + 1 }} of {{ count }}</div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for m in messages %}
+          <div class="flash">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post">
+      <input type="hidden" name="id" value="{{ q.id }}"/>
+
+      <label>Definition</label>
+      <textarea name="definition" required>{{ q.definition }}</textarea>
+
+      <label>Term</label>
+      <input type="text" name="term" value="{{ q.term }}" required />
+
+      <div class="two">
+        <div>
+          <label>Topic</label>
+          <input type="text" name="topic" value="{{ q.topic }}" placeholder="e.g., algorithms, networks" />
+        </div>
+        <div>
+          <label>Level</label>
+          <select name="level">
+            <option value="" {{ '' == q.level and 'selected' or '' }}>--</option>
+            <option value="GCSE" {{ 'GCSE' == q.level and 'selected' or '' }}>GCSE</option>
+            <option value="A Level" {{ 'A Level' == q.level and 'selected' or '' }}>A Level</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Tags (comma separated)</label>
+      <input type="text" name="tags" value="{{ q.tags | join(', ') }}" placeholder="e.g., pseudocode, design" />
+
+      <label>Notes (teacher/admin only)</label>
+      <textarea name="notes">{{ q.notes }}</textarea>
+
+      <div class="two">
+        <div class="col">
+          <div class="stats-grid">
+            <div class="stat"><strong>Attempts</strong><div>{{ q.attempts }}</div></div>
+            <div class="stat"><strong>Correct</strong><div>{{ q.correct_count }}</div></div>
+            <div class="stat"><strong>Wrong</strong><div>{{ q.wrong_count }}</div></div>
+          </div>
+        </div>
+        <div class="col">
+          <label>Attempts (edit)</label>
+          <input type="text" name="attempts" value="{{ q.attempts }}" />
+          <label>Correct (edit)</label>
+          <input type="text" name="correct_count" value="{{ q.correct_count }}" />
+          <label>Wrong (edit)</label>
+          <input type="text" name="wrong_count" value="{{ q.wrong_count }}" />
+          <label>Last seen (ISO, optional)</label>
+          <input type="text" name="last_seen" value="{{ q.last_seen or '' }}" placeholder="YYYY-MM-DDTHH:MM:SS" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button name="action" value="prev" class="secondary" title="Previous">◀ Prev</button>
+        <button name="action" value="next" class="secondary" title="Next">Next ▶</button>
+        <button name="action" value="new" class="secondary" title="Clear form for a new question">New</button>
+        <button name="action" value="add" title="Add as new">Add</button>
+        <button name="action" value="save" title="Save changes to this question">Save</button>
+        <button name="action" value="delete" class="danger" onclick="return confirm('Delete this question?');">Delete</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Optional: On "New", blank out fields client-side so the user can start typing without posting.
+    document.addEventListener('click', (e) => {
+      if (e.target && e.target.name === 'action' && e.target.value === 'new') {
+        e.preventDefault();
+        const form = e.target.closest('form');
+        form.querySelector('input[name=id]').value = '';
+        form.querySelector('textarea[name=definition]').value = '';
+        form.querySelector('input[name=term]').value = '';
+        form.querySelector('input[name=topic]').value = '';
+        form.querySelector('select[name=level]').value = '';
+        form.querySelector('input[name=tags]').value = '';
+        form.querySelector('textarea[name=notes]').value = '';
+        form.querySelector('input[name=attempts]').value = '0';
+        form.querySelector('input[name=correct_count]').value = '0';
+        form.querySelector('input[name=wrong_count]').value = '0';
+        form.querySelector('input[name=last_seen]').value = '';
+      }
+    }, false);
+  </script>
+</body>
+</html>

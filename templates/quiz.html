@@ -1,0 +1,134 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f9;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        background: white;
+        max-width: 520px;
+        margin: 40px auto;
+        padding: 22px 28px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .title {
+        font-weight: bold;
+        color: #333;
+      }
+      .question {
+        margin: 16px 0 10px 0;
+        font-size: 18px;
+      }
+      form {
+        margin-top: 8px;
+      }
+      input[type="text"] {
+        padding: 10px;
+        width: 70%;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      button,
+      .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        margin: 6px 4px 0 4px;
+        background: #4a90e2;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 5px;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      button:hover,
+      .btn:hover {
+        background: #3578c9;
+      }
+      .btn-secondary {
+        background: #7b8ba3;
+      }
+      .btn-secondary:hover {
+        background: #67788f;
+      }
+      .btn-success {
+        background: #3aa76d;
+      }
+      .btn-success:hover {
+        background: #2f8a59;
+      }
+
+      .primary {
+        background: #4a90e2;
+        color: white;
+      }
+      .secondary {
+        background: #8a8a8a;
+        color: white;
+      }
+      .mc-button {
+        background: #5cba47;
+        color: white;
+        width: 80%;
+        margin: 8px auto;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      {{ response|safe }}
+
+      <hr />
+
+      <!-- TEXT INPUT MODE -->
+      {% if not mc_mode %}
+      <form>
+        <input
+          type="text"
+          name="answer"
+          placeholder="Type your answer"
+          style="padding: 10px; width: 70%"
+          id="input-box"
+        />
+        <button type="submit" class="btn primary" id="submit-btn">Submit</button>
+      </form>
+      {% endif %}
+
+      <!-- MULTIPLE CHOICE MODE -->
+      {% if mc_mode %} {% for option in mc_options %}
+      <a href="/quiz?answer={{ option }}&mc=1" class="btn mc-button"
+        >{{ option }}</a
+      >
+      {% endfor %} {% endif %}
+
+      <hr />
+
+      <div style="margin-top: 14px">
+        <a class="btn" href="/shuffle">Shuffle</a>
+        <!-- <a class="btn btn-secondary" href="/set_lang">Switch question set</a> -->
+        <a
+          class="btn"
+          href="https://www.google.co.uk/search?q={{ ans }}+definition+for+computer+science+gcse&safe=active"
+          target="_blank"
+          >Don't know</a
+        >
+        <br />
+        <!-- {% if not mc_mode %}
+        <a href="/quiz?mc=1" class="btn">Switch to Multiple Choice Mode</a>
+        {% else %}
+        <a href="/quiz?mc=0" class="btn">Switch to Text Input Mode</a>
+        {% endif %} -->
+      </div>
+    </div>
+  </body>
+  <script>
+    window.onload = function() { document. getElementById("input-box"). focus(); };
+  </script>
+</html>
